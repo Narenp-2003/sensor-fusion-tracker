@@ -23,9 +23,13 @@ feed that radar's noisy range measurements into a Kalman filter to
 demonstrate a full detect-and-track pipeline.
 
 ## Project Structure
+
 sensor-fusion-tracker/
+
 ├── src/ # Core modules and weekly demo scripts
+
 ├── data/ # Any input data files
+
 ├── docs/ # Output plots and write-ups
 
 
