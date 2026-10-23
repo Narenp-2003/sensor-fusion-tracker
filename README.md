@@ -24,20 +24,20 @@ demonstrate a full detect-and-track pipeline.
 
 ## Project Structure
 
+```
 sensor-fusion-tracker/
-
-├── src/ # Core modules and weekly demo scripts
-
-├── data/ # Any input data files
-
-├── docs/ # Output plots and write-ups
-
+├── src/    # Core modules and weekly demo scripts
+├── data/   # Any input data files
+└── docs/   # Output plots and write-ups
+```
 
 ## Setup
+
+```
 python -m venv sf-env
 .\sf-env\Scripts\Activate.ps1
 pip install numpy matplotlib
-
+```
 
 ## Roadmap
 
@@ -51,12 +51,15 @@ pip install numpy matplotlib
 ## Week 1: 1D Kalman Filter
 
 Run:
+
+```
 cd src
 python week1_demo.py
-
+```
 
 Implements the classic predict-correct Kalman filter loop, tracking a
-1D position from noisy measurements, assuming a **position-only** state (no explicit velocity model).
+1D position from noisy measurements, assuming a **position-only** state
+(no explicit velocity model).
 
 **Result — an important negative finding:** the filtered estimate
 performed *worse* than the raw noisy measurements (MAE 10.6 vs 1.2,
@@ -73,36 +76,56 @@ Output: `docs/week1_output.png`
 ## Week 2: Constant-Velocity Kalman Filter
 
 Run:
+
+```
 cd src
 python week2_demo.py
+```
 
+State vector is `[position, velocity]` with a constant-velocity motion
+model (`F = [[1, dt], [0, 1]]`, position-only measurement `H = [1, 0]`).
+This fixes Week 1's lag: the prediction step now carries the target
+forward at its estimated velocity instead of assuming it stays still.
 
-Extends the state to `[position, velocity]` with a constant-velocity motion
-model (`F = [[1, dt], [0, 1]]`), fixing the lag problem found in Week 1.
+Setup: true velocity 2.0 units/step, measurement noise σ = 3.0,
+50 steps, seed 0.
 
-**Result:** MAE improved from 2.74 (raw measurements) to 1.24 (filtered) —
-a 54.9% improvement, confirming that modeling velocity explicitly lets the
-filter track a moving target instead of assuming it's stationary.
+**Result:** MAE dropped from 2.74 (raw measurements) to 1.24 (filtered),
+a 54.9% improvement. After the initial transient (steps 10+), MAE is
+0.97. The final velocity estimate is 1.90 (true: 2.0).
 
+Note: Week 1 and Week 2 use different noise settings, so their MAE
+numbers are not directly comparable.
 Output: `docs/week2_output.png`
 
 ## Week 3: Multi-Sensor Fusion
 
 Run:
+
+```
 cd src
 python week3_demo.py
+```
 
+Same constant-velocity filter, now fed by two independent position
+sensors (σ = 4.0 and σ = 1.5). One predict step per time step, then
+sequential updates: sensor 1, then sensor 2.
 
-Two sensors with different noise levels independently measure the same
-position each step. Both measurements are fused into a single state
-estimate via sequential Kalman updates within each time step (predict
-once, then update with sensor 1, then update again with sensor 2).
+| Estimator | MAE |
+|---|---|
+| Sensor 1 raw | 3.66 |
+| Sensor 2 raw | 1.06 |
+| Kalman, sensor 1 only | 1.57 |
+| Kalman, sensor 2 only | 0.65 |
+| **Kalman, fused** | **0.48** |
 
-**Result:** MAE (sensor 1 alone): 3.66, MAE (sensor 2 alone): 1.06,
-MAE (fused estimate): 0.48 — the fused estimate beats even the more
-precise individual sensor, showing that combining measurements yields
-a better estimate than trusting either sensor on its own.
+**Result:** fusion beats both raw sensors and the best single-sensor
+filter. The noisier sensor still helps, but contributes only ~12% of
+the measurement information (1/σ² = 0.0625 vs 0.444).
 
+**Verification:** sequential updates match a single batch update with
+stacked `H` and `R = diag(σ₁², σ₂²)` to within 1e-13, as expected for
+independent sensor noise.
 Output: `docs/week3_output.png`
 
 ## License
