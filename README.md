@@ -149,17 +149,18 @@ target, and a target that turns 6°/step from step 30. Each is run with
 low process noise (q = 0.01) and high process noise (q = 0.5).
 Metric: mean Euclidean position error, 60 steps, seed 0.
 
-| Scenario | Raw | KF (q=0.01) | KF (q=0.5) |
-|---|---|---|---|
-| Straight line | 3.95 | **2.33** | 2.75 |
-| Turning target | 3.95 | 4.12 | **2.90** |
+Mean position error over 200 random seeds (60 steps each):
 
-**Result:** on a straight path the filter cuts error by ~41%. When the
-target maneuvers, the low-noise filter does *worse than raw* (4.12 vs
-3.95) because the constant-velocity model is wrong — the same failure
-mode as Week 1. Raising process noise `q` restores tracking (2.90) at
-the cost of smoothing on straight segments, illustrating the core
-Kalman tuning trade-off between smoothing and responsiveness.
+| Scenario | Raw | KF (q=0.01) | KF (q=0.1) | KF (q=0.5) |
+|---|---|---|---|---|
+| Straight line | 3.76 | **1.84** | 2.18 | 2.49 |
+| Turning target | 3.76 | 3.39 | **2.42** | 2.53 |
+
+**Result:** on a straight path a low-noise filter cuts error by ~51%,
+but on the turning target it barely beats raw data (3.39 vs 3.76) and
+is worse than raw on 32 of 200 seeds, because the constant-velocity
+model is wrong. A process noise matched to the maneuver acceleration
+(a = vω ≈ 0.23, so q ≈ 0.055) lands in the sweet spot (q = 0.1: 2.42).
 
 ![Week 4 output](docs/week4_output.png)
 
