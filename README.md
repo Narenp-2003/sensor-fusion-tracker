@@ -18,8 +18,8 @@ target tracking — built here from first principles rather than using
 a library like `filterpy`, so every step is understood and verifiable.
 
 This project connects directly to [sdr-simulator](https://github.com/Narenp-2003/sdr-simulator),
-where Week 7 built an FMCW radar range estimator — later weeks here
-feed that radar's noisy range measurements into a Kalman filter to
+where Week 7 built an FMCW radar range estimator. Week 5 here feeds
+that radar's noisy range measurements into a Kalman filter to
 demonstrate a full detect-and-track pipeline.
 
 ## Project Structure
@@ -45,15 +45,16 @@ pip install numpy matplotlib
 - [x] **Week 2** — 2D state vector (position + velocity), physics-based motion model
 - [x] **Week 3** — Multi-sensor fusion (combining two noisy sensors)
 - [x] **Week 4** — 2D plane tracking (x-y motion)
-- [ ] **Week 5** — Fusing radar data from `sdr-simulator` into the filter
+- [x] **Week 5** — Fusing radar data from `sdr-simulator` into the filter
 - [ ] **Week 6** — Visualization polish, final write-up
 
 ## Methodology
 
-Each `weekN_demo.py` uses seed 0 to draw its plot. The numbers in the
-result tables for Weeks 2-4 come from `src/monte_carlo.py`, which
+Each `weekN_demo.py` uses a fixed seed to draw its plot. The numbers in
+the result tables for Weeks 2-4 come from `src/monte_carlo.py`, which
 repeats every experiment over 200 random noise seeds and reports
 mean ± std, so results don't depend on one lucky or unlucky noise draw.
+Week 5 runs its own 200-seed evaluation inside `week5_demo.py`.
 
 ```
 cd src
@@ -221,6 +222,7 @@ switching to `round()` brings it to +0.003 m. Doppler is not modelled
 (`f_start = 0`), so velocity comes from range history alone.
 
 ![Week 5 output](docs/week5_output.png)
+
 ## License
 
 MIT
