@@ -71,7 +71,7 @@ pip install -r requirements.txt
 - [x] **Week 3** — Multi-sensor fusion (combining two noisy sensors)
 - [x] **Week 4** — 2D plane tracking (x-y motion)
 - [x] **Week 5** — Fusing radar data from `sdr-simulator` into the filter
-- [ ] **Week 6** — Visualization polish, final write-up
+- [x] **Week 6** — Visualization polish, final write-up
 
 ## Methodology
 
