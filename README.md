@@ -4,6 +4,26 @@ State estimation and sensor fusion in Python — Kalman filters built
 from scratch, tracking noisy motion and fusing multiple sensors, with
 a direct tie-in to real automotive/ADAS tracking pipelines.
 
+## Results at a glance
+
+![Summary of results](docs/summary.png)
+
+Filtered error as a percentage of raw-measurement error (log scale).
+Week 3 is measured against the best raw sensor, so it includes the gain
+from filtering itself (fusion alone adds ~6%). The Week 5 raw baseline
+at −26 dB is dominated by outlier detections.
+
+| Week | What was built | Headline |
+|---|---|---|
+| 1 | Position-only Kalman filter | Worse than raw: the model assumes a stationary target |
+| 2 | Constant-velocity model | 50% lower error |
+| 3 | Two-sensor fusion | Lower error than either sensor; fusion alone adds ~6% (matches theory) |
+| 4 | 2D tracking | 50% lower error on a straight path; a mistuned `q` nearly loses the gain on a turn |
+| 5 | FMCW radar → tracker | Plain filter trusts outliers and is worse than raw; gating fixes it |
+
+Three failure modes show up repeatedly: a **wrong motion model** (Weeks 1, 4),
+**mis-tuned process noise** (Week 4), and **non-Gaussian outliers** (Week 5).
+
 ## Motivation
 
 Real-world sensors are noisy. A single GPS reading, radar detection,
@@ -26,9 +46,14 @@ demonstrate a full detect-and-track pipeline.
 
 ```
 sensor-fusion-tracker/
-├── src/    # Core modules, weekly demo scripts, Monte Carlo evaluation
-├── data/   # Any input data files
-└── docs/   # Output plots and write-ups
+├── src/
+│   ├── kalman_1d.py       # Week 1 filter module
+│   ├── week1_demo.py ... week5_demo.py
+│   ├── radar_sim.py       # FMCW radar, from sdr-simulator
+│   ├── monte_carlo.py     # 200-seed evaluation, Weeks 2-4
+│   └── make_summary.py    # regenerates docs/summary.png
+├── docs/                  # output plots
+└── requirements.txt
 ```
 
 ## Setup
@@ -36,7 +61,7 @@ sensor-fusion-tracker/
 ```
 python -m venv sf-env
 .\sf-env\Scripts\Activate.ps1
-pip install numpy matplotlib
+pip install -r requirements.txt
 ```
 
 ## Roadmap
