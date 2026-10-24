@@ -248,6 +248,8 @@ switching to `round()` brings it to +0.003 m. Doppler is not modelled
 
 ![Week 5 output](docs/week5_output.png)
 
+Full write-up: [docs/WRITEUP.md](docs/WRITEUP.md)
+
 ## License
 
 MIT
